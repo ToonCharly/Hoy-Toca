@@ -36,6 +36,9 @@
 
   globalThis.Sync = {
     clientId,
-    run() { return inflight || (inflight = exec(true).finally(() => { inflight = null; })); }
+    run() {
+      if (globalThis.APP_CONFIG?.API === null) return Promise.resolve({ ok: false, reason: 'disabled' });
+      return inflight || (inflight = exec(true).finally(() => { inflight = null; }));
+    }
   };
 })();

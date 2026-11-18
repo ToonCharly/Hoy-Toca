@@ -45,10 +45,19 @@ Notas:
 - Si solo quieres hosting estático (GitHub Pages/Netlify), la PWA funciona completa salvo la sincronización y el push. Para tener ambos, deja el backend en Render y pon su URL en `public/config.js` (`API: 'https://tu-app.onrender.com/api'`).
 
 ## Publicar la PWA estática en GitHub Pages
-Cada push a `main` que cambie `public/` publica automáticamente esa carpeta mediante GitHub Actions.
-La URL será `https://tooncharly.github.io/Hoy-Toca/`. GitHub Pages sirve solo archivos estáticos:
-el CRUD, IndexedDB, avisos locales y modo offline funcionan; sincronización entre dispositivos y Push
-requieren desplegar el backend con HTTPS y configurar `API` en `public/config.js`.
+La rama `gh-pages` contiene el contenido de `public/` en su raíz. En GitHub, abre **Settings > Pages**,
+elige **Deploy from a branch**, selecciona `gh-pages` y `/(root)`, y guarda. La URL será
+`https://tooncharly.github.io/Hoy-Toca/`.
+
+Para publicar cambios posteriores de `public/`, ejecuta desde `main`:
+```bash
+git subtree push --prefix=public origin gh-pages
+```
+
+GitHub Pages sirve solo archivos estáticos: el CRUD, IndexedDB, avisos locales y modo offline funcionan;
+sincronización entre dispositivos y Push requieren desplegar el backend con HTTPS y configurar `API`
+en `public/config.js`. El despliegue automático con GitHub Actions requiere que la cuenta pueda ejecutar
+Actions; si se restablece, el workflow se puede volver a agregar.
 
 ## Probar offline (para capturas y video)
 1. Abre la app en Chrome, espera a que cargue y crea 2 o 3 actividades.

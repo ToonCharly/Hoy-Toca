@@ -34,11 +34,13 @@ Sincronización: cada cambio local se guarda en `activities` y se encola en `out
 Al haber conexión se envía a `POST /api/sync`. En conflicto gana el `updatedAt` más reciente (last-write-wins).
 
 ## Publicar en Render (HTTPS incluido)
-1. Sube esta carpeta a un repositorio de GitHub.
-2. En Render: **New > Web Service**, conecta el repo. Build: `npm install`. Start: `npm start`.
-3. Genera claves push con `npm run vapid` y crea estas variables de entorno en Render:
-   `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (por ejemplo `mailto:tu_correo@dominio.com`).
-4. Abre la URL `https://....onrender.com`. Esa es tu URL pública.
+1. En Render: **New > Blueprint**, conecta este repositorio y confirma el servicio definido en `render.yaml`.
+2. Genera claves push localmente con `npm run vapid`. En Render, introduce `VAPID_PUBLIC_KEY`,
+   `VAPID_PRIVATE_KEY` y `VAPID_SUBJECT` como variables secretas del servicio. No las subas a GitHub.
+3. Espera a que el despliegue pase el chequeo `/api/health` y copia la URL HTTPS del backend.
+4. Pon la URL del backend seguida de `/api` en `public/config.js`, por ejemplo:
+   `API: 'https://hoy-toca-tooncharly-api.onrender.com/api'`.
+5. Publica el cambio de `public/` en `gh-pages` usando el comando de la sección de GitHub Pages.
 
 Notas:
 - El plan gratuito usa disco efímero: si el servidor reinicia pierde `data.json`. La app lo detecta (`reset`) y vuelve a subir los datos locales.

@@ -128,7 +128,7 @@ async function syncNow(quiet) {
   const r = await Sync.run();
   if (r.ok) await load();
   status();
-  if (!quiet) toast(r.ok ? 'Sincronizado' : r.reason === 'offline' ? 'Sin conexión: los cambios se enviarán al volver' : 'No se pudo contactar al servidor');
+  if (!quiet) toast(r.ok ? 'Sincronizado' : r.reason === 'disabled' ? 'Esta versión guarda datos solo en este dispositivo' : r.reason === 'offline' ? 'Sin conexión: los cambios se enviarán al volver' : 'No se pudo contactar al servidor');
   return r;
 }
 
@@ -207,10 +207,16 @@ async function renderSettings() {
   $('#btn-notif').hidden = perm !== 'default';
   $('#btn-test').hidden = perm !== 'granted';
   const ls = await Store.getMeta('lastSync');
-  $('#sync-state').textContent = ls ? `Última sincronización: ${DAY.format(ls)}, ${TIME.format(ls)}` : 'Aún no se ha sincronizado.';
-  const pushOk = 'serviceWorker' in navigator && 'PushManager' in window;
+  const backendEnabled = globalThis.APP_CONFIG?.API !== null;
+  $('#sync-state').textContent = !backendEnabled ? 'GitHub Pages guarda los datos solo en este dispositivo.' : ls ? `Última sincronización: ${DAY.format(ls)}, ${TIME.format(ls)}` : 'Aún no se ha sincronizado.';
+  $('#btn-sync').hidden = !backendEnabled;
+  const pushOk = backendEnabled && 'serviceWorker' in navigator && 'PushManager' in window;
   $('#btn-push').hidden = !pushOk;
-  if (!pushOk) { $('#push-state').textContent = 'Este navegador no admite push.'; return; }
+  if (!pushOk) {
+    $('#push-state').textContent = backendEnabled ? 'Este navegador no admite push.' : 'Push requiere configurar un backend.';
+    $('#btn-push-test').hidden = true;
+    return;
+  }
   const sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription();
   $('#push-state').textContent = sub ? 'Activados. Recibirás avisos aunque cierres la app.' : 'Desactivados.';
   $('#btn-push').textContent = sub ? 'Desactivar push' : 'Activar push';

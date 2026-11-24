@@ -1,7 +1,7 @@
 /* Service Worker: caché offline, sincronización en segundo plano y notificaciones push. */
 importScripts('./config.js', './db.js', './sync.js');
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `shell-${VERSION}`;
 const RUNTIME_CACHE = `runtime-${VERSION}`;
 const INDEX_URL = new URL('./index.html', self.registration.scope).href;

@@ -81,3 +81,9 @@ Ya incluye: `lang`, viewport, `theme-color`, descripción, etiquetas en formular
 
 ## Video demostrativo (guion de 2 a 3 minutos)
 URL con candado HTTPS, crear/editar/eliminar, modo offline y recarga, vuelta en línea con la sincronización, aviso local, push con la app cerrada y reporte Lighthouse.
+
+## Entregables
+Los reportes y evidencias de la entrega están en [`entregables/`](./entregables/README.md):
+auditoría Lighthouse, capturas del funcionamiento offline y video demostrativo. El código fuente
+está en este repositorio y la aplicación publicada en
+https://tooncharly.github.io/Hoy-Toca/.

@@ -54,7 +54,8 @@ const post = async (p, body) => { const r = await fetch(api(p), { method: 'POST'
 let toastTimer;
 function toast(msg, act) {
   const t = $('#toast');
-  t.replaceChildren(h('span', null, msg), act && h('button', { class: 'btn-link', type: 'button', onclick: () => { t.classList.remove('show'); act.fn(); } }, act.label));
+  t.replaceChildren(h('span', null, msg));
+  if (act) t.append(h('button', { class: 'btn-link', type: 'button', onclick: () => { t.classList.remove('show'); act.fn(); } }, act.label));
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), act ? 7000 : 3500);

@@ -239,14 +239,27 @@ async function disablePush() {
   await sub.unsubscribe();
   toast('Push desactivado');
 }
+function pushErrorMessage(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  if (!('Notification' in window) || Notification.permission !== 'granted')
+    return 'Permite las notificaciones para este sitio y vuelve a intentarlo.';
+  if (error?.name === 'AbortError' && /permission denied/i.test(message))
+    return 'El navegador bloqueó Push en esta ventana. Prueba en una ventana normal (no InPrivate) y permite las notificaciones.';
+  return `No se pudo activar Push: ${message || 'error desconocido'}`;
+}
 $('#btn-settings').onclick = () => { renderSettings(); dlgSet.showModal(); };
 $('#set-close').onclick = () => dlgSet.close();
 $('#btn-notif').onclick = async () => { await Notification.requestPermission(); renderSettings(); };
 $('#btn-test').onclick = () => showNotification('Aviso de prueba', 'Así se verán tus recordatorios.', 'prueba');
 $('#btn-push').onclick = async () => {
+  let pushError;
   try { (await (await navigator.serviceWorker.ready).pushManager.getSubscription()) ? await disablePush() : await enablePush(); }
-  catch (e) { toast('No se pudo activar push. ¿Está encendido el servidor?'); }
-  renderSettings();
+  catch (e) { pushError = pushErrorMessage(e); }
+  await renderSettings();
+  if (pushError) {
+    $('#push-state').textContent = pushError;
+    toast(pushError);
+  }
 };
 $('#btn-push-test').onclick = async () => { try { await post('/push/test', { clientId: await Sync.clientId() }); } catch { toast('No se pudo enviar el push de prueba'); } };
 $('#btn-sync').onclick = async () => { await syncNow(false); renderSettings(); };
